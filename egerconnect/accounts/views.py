@@ -1,86 +1,40 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import RegisterSerializer
-from .serializers import LoginSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework.views import APIView  #apiview allows me to handle http methods,get,put, return json respones and use serializers easily
+from rest_framework.response import Response  #converts python dictionary into http responses, handles content type, works with status code
+from rest_framework import status #more readble
+from .serializers import RegisterSerializer, LoginSerializer   #view doesnt validate data it sends to serializers
 
 
 class RegisterView(APIView):
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+    def post(self, request):  #this method runs when a post request is sent to this endpoint(which is registering/signup).....api/auth/register/..... request conatins data and user that is making the request
+        serializer = RegisterSerializer(data=request.data)   #take incoming data and pass tto this serializer for validation and saving to db
 
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"message": "Student registered successfully"},
+                {"message": "User registered successfully"},
                 status=status.HTTP_201_CREATED
             )
 
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  #400-invalid input
+
 class LoginView(APIView):
-    def post(self, request):
+    def post(self, request):   #runs when user is login in and sends post request to api/auth/login/ endpoint
         serializer = LoginSerializer(data=request.data)
+
         if serializer.is_valid():
             user = serializer.validated_data["user"]
+
             return Response(
                 {
                     "message": "Login successful",
-                    "registration_number": user.registration_number,
-                    "full_name": user.full_name,
-                    "email": user.email
+                    "user": {
+                        "id": user.id,
+                        "email": user.email,
+                        "full_name": user.full_name,
+                        "registration_number": user.registration_number,
+                    }
                 },
-                status=200
+                status=status.HTTP_200_OK
             )
-        return Response(serializer.errors, status=400)
-    
-        
-        
 
-
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import status
-# from .serializers import LoginSerializer
-# from rest_framework_simplejwt.tokens import RefreshToken
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import ensure_csrf_cookie
-
-# @method_decorator(ensure_csrf_cookie, name="dispatch")
-# class LoginView(APIView):
-#     def post(self, request):
-#         serializer = LoginSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user = serializer.validated_data["user"]
-
-#             # Create JWT token
-#             refresh = RefreshToken.for_user(user)
-#             access_token = str(refresh.access_token)
-
-#             # Set cookie
-#             response = Response(
-#                 {
-#                     "message": "Login successful",
-#                     "registration_number": user.registration_number,
-#                     "full_name": user.full_name,
-#                     "email": user.email,
-#                 },
-#                 status=status.HTTP_200_OK,
-#             )
-
-#             # HttpOnly cookie
-#             response.set_cookie(
-#                 key="access_token",
-#                 value=access_token,
-#                 httponly=True,
-#                 samesite="Lax",  # works with Next.js dev server
-#                 secure=False,    # True if using HTTPS in production
-#             )
-
-#             return response
-
-#         return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
