@@ -1,6 +1,7 @@
 from rest_framework import viewsets
-from .models import Notice, LostAndFound, Scholarship
+from .models import Events, Notice, LostAndFound, Scholarship
 from .serializers import (
+    EventsSerializer,
     NoticeSerializer,
     LostAndFoundSerializer,
     ScholarshipSerializer
@@ -28,6 +29,14 @@ class LostAndFoundViewSet(viewsets.ModelViewSet):
 class ScholarshipViewSet(viewsets.ModelViewSet):
     queryset = Scholarship.objects.all().order_by("-created_at")
     serializer_class = ScholarshipSerializer
+    def get_permissions(self):
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            return [IsAdminUser()]
+        return [AllowAny()]
+    
+class EventsViewSet(viewsets.ModelViewSet):
+    queryset = Events.objects.all().order_by("-created_at")
+    serializer_class = EventsSerializer
     def get_permissions(self):
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             return [IsAdminUser()]

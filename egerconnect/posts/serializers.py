@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Notice, LostAndFound, Scholarship
+from .models import Events, Notice, LostAndFound, Scholarship
 
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,4 +16,10 @@ class LostAndFoundSerializer(serializers.ModelSerializer):
 class ScholarshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Scholarship
+        fields = "__all__"
+        
+        
+class EventsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Events
         fields = "__all__"
