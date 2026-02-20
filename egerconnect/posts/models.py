@@ -41,9 +41,14 @@ class Events(models.Model):
         return self.title
     
 
-from django.db import models
+
 
 class SupportRequest(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="support_requests", null=True, blank=True
+    )
     # Section 1: Student Details
     full_name = models.CharField(max_length=255)
     registration_number = models.CharField(max_length=50)

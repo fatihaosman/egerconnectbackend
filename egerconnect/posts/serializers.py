@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Events, Notice, LostAndFound, Scholarship
+from .models import Events, Notice, LostAndFound, Scholarship, SupportRequest
 
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,11 @@ class EventsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
         fields = "__all__"
+
+
+
+
+class SupportRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportRequest
+        exclude = ["user"]

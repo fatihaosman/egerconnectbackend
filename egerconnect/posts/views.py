@@ -1,9 +1,11 @@
 from rest_framework import viewsets
-from .models import Events, Notice, LostAndFound, Scholarship
+from .models import Events, Notice, LostAndFound, Scholarship, SupportRequest
+from rest_framework import generics, permissions
 from .serializers import (
     EventsSerializer,
     NoticeSerializer,
     LostAndFoundSerializer,
+    SupportRequestSerializer,
     ScholarshipSerializer
 )
 from rest_framework.permissions import IsAdminUser, AllowAny
@@ -41,3 +43,35 @@ class EventsViewSet(viewsets.ModelViewSet):
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             return [IsAdminUser()]
         return [AllowAny()]
+    
+from rest_framework import viewsets, permissions
+from .models import SupportRequest
+from .serializers import SupportRequestSerializer
+
+
+class SupportRequestViewSet(viewsets.ModelViewSet):
+    queryset = SupportRequest.objects.all()
+    serializer_class = SupportRequestSerializer
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve", "update", "destroy"]:
+            return [permissions.IsAdminUser()]
+
+        if self.action == "create":
+            return [permissions.IsAuthenticated()]
+
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    
+# class SupportRequestViewSet(viewsets.ModelViewSet):
+#     queryset = SupportRequest.objects.all()
+#     serializer_class = SupportRequestSerializer
+
+#     def get_permissions(self):
+#         if self.action in ["list", "retrieve"]:
+#             return [permissions.IsAdminUser()]
+#         return [permissions.AllowAny()]
+
