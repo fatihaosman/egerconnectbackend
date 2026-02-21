@@ -1,0 +1,25 @@
+<!-- templates/events.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Events</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f7f7f7; }
+    .card { background: white; border-radius: 5px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .title { font-weight: bold; font-size: 1.2em; }
+    .date { color: #555; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>Upcoming Events</h1>
+  {% for event in events %}
+    <div class="card">
+      <div class="title">{{ event.title }}</div>
+      <div class="date">{{ event.created_at|date:"d M Y" }}</div>
+      <p>{{ event.description }}</p>
+    </div>
+  {% empty %}
+    <p>No events yet.</p>
+  {% endfor %}
+</body>
+</html>

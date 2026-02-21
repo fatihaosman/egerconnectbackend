@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Support Request</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .checkbox-group input {
+      width: auto;
+      margin-right: 10px;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;  /* GREEN */
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .success-message {
+      text-align: center;
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Submit Support Request</h1>
+
+  <form id="supportForm">
+    
+    <label>Full Name</label>
+    <input type="text" name="full_name" required>
+
+    <label>Registration Number</label>
+    <input type="text" name="registration_number" required>
+
+    <label>Email</label>
+    <input type="email" name="email" required>
+
+    <label>Faculty / Department</label>
+    <input type="text" name="faculty">
+
+    <label>Phone Number</label>
+    <input type="text" name="phone_number">
+
+    <label>Type of Need</label>
+    <select name="type_of_need" required>
+      <option value="">-- Select Need --</option>
+      <option value="Accommodation Support">Accommodation Support</option>
+      <option value="Food Support">Food Support</option>
+      <option value="Medical Assistance">Medical Assistance</option>
+      <option value="Tuition Support">Tuition Support</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label>Explanation</label>
+    <textarea name="explanation" required></textarea>
+
+    <label>Financial Aid Status</label>
+    <select name="financial_aid_status">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+      <option value="in_progress">In Progress</option>
+    </select>
+
+    <label>Referee Full Name</label>
+    <input type="text" name="referee_full_name">
+
+    <label>Referee Registration Number</label>
+    <input type="text" name="referee_registration_number">
+
+    <label>Referee Faculty</label>
+    <input type="text" name="referee_faculty">
+
+    <div class="checkbox-group">
+      <input type="checkbox" name="confirm_student_status" required>
+      <label style="margin:0;">I confirm that I am a registered student.</label>
+    </div>
+
+    <button type="submit">Submit Request</button>
+
+    <div id="successMessage" class="success-message"></div>
+
+  </form>
+
+  <script>
+    document.getElementById('supportForm').onsubmit = async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      const response = await fetch('/api/posts/support-requests/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem("access")
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        document.getElementById("successMessage").innerText =
+          "Support request submitted successfully. We will get back to you.";
+
+        this.reset();
+      } else {
+        alert("Something went wrong. Make sure you are logged in.");
+      }
+    }
+  </script>
+
+</body>
+</html>

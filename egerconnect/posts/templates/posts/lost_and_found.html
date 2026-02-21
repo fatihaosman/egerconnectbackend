@@ -1,0 +1,24 @@
+<!-- templates/lost_and_found.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lost & Found</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f7f7f7; }
+    .card { background: white; border-radius: 5px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .item { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Lost & Found</h1>
+  {% for item in items %}
+    <div class="card">
+      <div class="item">{{ item.title }}</div>
+      <p>{{ item.description }}</p>
+      <div>Found/Reported: {{ item.created_at|date:"d M Y" }}</div>
+    </div>
+  {% empty %}
+    <p>No items found yet.</p>
+  {% endfor %}
+</body>
+</html>

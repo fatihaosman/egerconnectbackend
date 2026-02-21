@@ -1,0 +1,24 @@
+<!-- templates/scholarships.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scholarships & Bursaries</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f7f7f7; }
+    .card { background: white; border-radius: 5px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .title { font-weight: bold; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>Scholarships & Bursaries</h1>
+  {% for s in scholarships %}
+    <div class="card">
+      <div class="title">{{ s.title }}</div>
+      <p>{{ s.description }}</p>
+      <div>Deadline: {{ s.created_at|date:"d M Y" }}</div>
+    </div>
+  {% empty %}
+    <p>No scholarships yet.</p>
+  {% endfor %}
+</body>
+</html>

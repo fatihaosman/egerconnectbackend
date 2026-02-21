@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.views import APIView  #apiview allows me to handle http methods,get,put, return json respones and use serializers easily
 from rest_framework.response import Response  #converts python dictionary into http responses, handles content type, works with status code
 from rest_framework import status #more readble
@@ -38,3 +39,11 @@ class LoginView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# --- Template Views ---
+def register_page(request):
+    return render(request, "accounts/register.html")
+
+def login_page(request):
+    return render(request, "accounts/login.html")
