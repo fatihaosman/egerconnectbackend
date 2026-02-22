@@ -8,18 +8,29 @@
     .card { background: white; border-radius: 5px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .title { font-weight: bold; font-size: 1.2em; }
     .date { color: #555; font-size: 0.9em; }
+    .card img {
+    {% comment %} width: 100%; {% endcomment %}
+    max-height: 350px;
+    object-fit: contain;
+    background: #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
   </style>
 </head>
 <body>
   <h1>Upcoming Events</h1>
   {% for event in events %}
-    <div class="card">
-      <div class="title">{{ event.title }}</div>
-      <div class="date">{{ event.created_at|date:"d M Y" }}</div>
-      <p>{{ event.description }}</p>
-    </div>
-  {% empty %}
-    <p>No events yet.</p>
-  {% endfor %}
+  <div class="card">
+    <div class="title">{{ event.title }}</div>
+
+    {% if event.image %}
+      <img src="{{ event.image.url }}" style=" margin:10px 0; border-radius:6px;">
+    {% endif %}
+
+    <p>{{ event.description }}</p>
+    <div class="date">{{ event.created_at|date:"d M Y" }}</div>
+  </div>
+{% endfor %}
 </body>
 </html>

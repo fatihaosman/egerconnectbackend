@@ -1,17 +1,64 @@
-# 🚀 EgerConnect – Campus Information & Student Support System
+# EgerConnect 🎓
 
-## 📌 Overview
+EgerConnect is a campus information and student support management system built with Django and Django REST Framework.
 
-**EgerConnect** is a backend-powered campus information management system built using **Django** and **Django REST Framework (DRF)**.
+The platform allows students to:
+- Register and log in securely
+- View campus announcements and updates
+- Submit support requests
+- Access information about events, scholarships, and lost & found
 
-The system is designed to:
+Admins can:
+- Create and manage campus content
+- Review and manage student support requests
 
-- Manage campus notices
-- Provide secure user authentication
-- Support structured content management
-- Serve as a foundation for events, lost & found, and scholarship systems
+---
 
-This project is being developed as part of the **ALX Backend Capstone Project (Part 3 – Start Building)**.
+## 🚀 Features
+
+### 🔐 Authentication
+- Custom User model (email-based login)
+- JWT authentication (SimpleJWT)
+- User registration
+- Secure login with token generation
+- Role-based permissions (Admin vs Student)
+
+---
+
+### 📢 Content Management
+
+#### Notices
+- Admin can create, update, delete
+- Public users can view
+
+#### Events
+- Image upload supported
+- Public viewing
+- Admin-only management
+
+#### Lost & Found
+- Admin posts items
+- Students can view
+
+#### Scholarships / Bursaries
+- Admin posts opportunities
+- Students can view
+
+---
+
+### 📝 Support Request System
+
+Students can:
+- Submit support requests
+- Select type of need (Accommodation, Food, Medical, etc.)
+- Provide explanation and referee details
+- View only their own requests
+
+Admins can:
+- View all submitted support requests
+- Manage and review them
+
+Admin users cannot submit support requests.
 
 ---
 
@@ -20,61 +67,88 @@ This project is being developed as part of the **ALX Backend Capstone Project (P
 - Python 3.12
 - Django
 - Django REST Framework
-- SQLite (Development Database)
-- Postman (API Testing)
+- SimpleJWT
+- SQLite (development)
+- HTML + CSS (basic frontend templates)
 
 ---
 
-## ✅ Features Implemented
+## ⚙️ Installation & Setup
 
-### 🔐 1. Custom Authentication System
+### 1️⃣ Clone Repository
 
-- Implemented a **custom User model**
-- Authentication using **email instead of username**
-- Secure password hashing using Django's `create_user()` method
-- Superuser (admin) creation supported
+```bash
+git clone https://github.com/YOUR_USERNAME/EgerConnect.git
+cd EgerConnect
 
-#### Authentication Endpoints:
+RUN MIGRATIONS
+python manage.py makemigrations
+python manage.py migrate
 
-- `POST /api/auth/register/`
-- `POST /api/auth/login/`
+RUN SERVER
+python manage.py runserver
 
-Authentication has been tested successfully using Postman.
+OPEN IN BROWSER
+http://127.0.0.1:8000/
 
----
 
-### 📢 2. Notice Management System
+🔑 API Endpoints
+Authentication
 
-Implemented a Notice API with the following fields:
+POST /api/auth/register/
 
-- `title` – Short notice title
-- `image` – Optional image upload
-- `created_at` – Automatically records posting date
+POST /api/auth/token/
 
-#### Notice Endpoints:
+POST /api/auth/token/refresh/
 
-- `GET /api/posts/notices/`
-  - Public access
-  - Returns notices ordered by latest first
 
-- `POST /api/posts/notices/`
-  - Admin-only access
-  - Creates a new notice
+🔑 API Endpoints
+Authentication
 
-#### Permissions:
+POST /api/auth/register/
 
-- Anyone can view notices
-- Only admin users (`is_staff=True`) can create, update, or delete notices
+POST /api/auth/token/
 
----
+POST /api/auth/token/refresh/
 
-### 🖼 Media Upload Configuration
 
-- Configured `MEDIA_URL` and `MEDIA_ROOT`
-- Enabled image uploads using Django’s `ImageField`
-- Images stored in `/media/notices/`
+project structure.
+egerconnect/
+│
+├── accounts/        # Authentication app
+├── posts/           # Content & support system
+├── media/           # Uploaded images
+├── templates/       # HTML templates
+├── manage.py
+└── db.sqlite3
 
----
 
-## 📂 Project Structure
+🔐 Permissions Logic
 
+Public users: Can view content.
+
+Authenticated students:
+
+Can submit support requests.
+
+Can only view their own requests.
+
+Admin users:
+
+Can manage all posts.
+
+Can view all support requests.
+
+Cannot submit support requests.
+
+📌 Current Status
+
+Backend fully functional
+
+JWT authentication working
+
+Image uploads configured
+
+Basic frontend templates implemented
+
+Role-based permissions enforced
