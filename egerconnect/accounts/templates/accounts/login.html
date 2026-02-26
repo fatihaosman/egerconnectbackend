@@ -39,16 +39,22 @@ document.getElementById('loginForm').onsubmit = async function(e) {
   const result = await response.json();
 
   if (response.ok) {
-        // ✅ Store tokens
-        localStorage.setItem("access", result.access);
-        localStorage.setItem("refresh", result.refresh);
+    localStorage.setItem("access", result.access);
+    localStorage.setItem("refresh", result.refresh);
 
-        // ✅ Redirect to Django template showing success
-        window.location.href = "/accounts/login_success/";
-      } else {
-        // Show errors instead of alert
-        document.getElementById('errorMsg').innerText = "Invalid login details.";
-   }
+    // Decode token
+    const payload = JSON.parse(atob(result.access.split('.')[1]));
+
+    // 👑 If admin → go to Django admin
+    if (payload.is_staff || payload.is_superuser) {
+        window.location.href = "/admin/";
+    } else {
+        // 👤 Normal user → go to dashboard
+        window.location.href = "/accounts/dashboard/";
+    }
+    } else {
+        document.getElementById("errorMsg").innerText = "Invalid login credentials.";
+    }
 }
 </script>
 </body>
