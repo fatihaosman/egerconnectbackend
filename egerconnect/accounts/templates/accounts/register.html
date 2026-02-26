@@ -28,17 +28,26 @@
     <button type="submit">Register</button>
   </form>
 
-  <script>
-    document.getElementById('registerForm').onsubmit = async e => {
+   <script>
+    document.getElementById('registerForm').onsubmit = async function(e) {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      const res = await fetch('/api/auth/register/', {
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      const response = await fetch('/api/auth/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      const result = await res.json();
-      alert(result.message || JSON.stringify(result));
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // ✅ Redirect to registration success page
+        window.location.href = "/accounts/register_success/";
+      } else {
+        document.getElementById('errorMsg').innerText = "Invalid registration details. Please check the inputs.";
+      }
     };
   </script>
 </body>

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User
 from django.contrib.auth import authenticate
 import re
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -50,5 +51,21 @@ class LoginSerializer(serializers.Serializer): #we are not using model here beca
 
         data["user"] = user
         return data
+    
+    
+    # accounts/serializers.py
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['full_name'] = user.full_name
+        token['email'] = user.email
+        token['registration_number'] = user.registration_number
+
+        return token
 
 

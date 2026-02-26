@@ -26,6 +26,7 @@ urlpatterns = [
 
     # Auth endpoints (register etc.)
     path("api/auth/", include("accounts.urls")),
+    path('accounts/', include('accounts.urls')),  # <-- add this line
 
     # JWT token endpoints
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -33,6 +34,7 @@ urlpatterns = [
 
     # Posts app
     path("api/posts/", include("posts.urls")),
+    
 ]
 
 if settings.DEBUG:

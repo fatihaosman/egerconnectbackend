@@ -22,19 +22,7 @@
     <button type="submit">Login</button>
   </form>
 
-  {% comment %} <script>
-    document.getElementById('loginForm').onsubmit = async e => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      const res = await fetch('/api/auth/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const result = await res.json();
-      alert(result.message || JSON.stringify(result));
-    };
-  </script> {% endcomment %}
+
   <script>
 document.getElementById('loginForm').onsubmit = async function(e) {
   e.preventDefault();
@@ -51,18 +39,19 @@ document.getElementById('loginForm').onsubmit = async function(e) {
   const result = await response.json();
 
   if (response.ok) {
-    // ✅ STORE TOKENS
-    localStorage.setItem("access", result.access);
-    localStorage.setItem("refresh", result.refresh);
+        // ✅ Store tokens
+        localStorage.setItem("access", result.access);
+        localStorage.setItem("refresh", result.refresh);
 
-    alert("Login successful!");
-   
-  } else {
-    alert("Invalid login details.");
-  }
+        // ✅ Redirect to Django template showing success
+        window.location.href = "/accounts/login_success/";
+      } else {
+        // Show errors instead of alert
+        document.getElementById('errorMsg').innerText = "Invalid login details.";
+   }
 }
 </script>
 </body>
 </html>
 
- {% comment %} window.location.href = "/api/posts/support-request-page/"; {% endcomment %}
+ {% comment %} window.location.href = "/api/posts/support-request-page/"; {% endcomment %} 

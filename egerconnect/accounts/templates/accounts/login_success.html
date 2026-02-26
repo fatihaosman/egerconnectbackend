@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Successful</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f7f7f7; }
+        .success-message { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; display: inline-block; }
+        .user-info { margin-top: 20px; }
+        a.button { margin-top: 30px; display: inline-block; text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; }
+        a.button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="success-message">
+        <h2>Login Successful!</h2>
+        <p id="welcome-msg">Welcome!</p>
+    </div>
+    <div class="user-info">
+        <p id="user-email"></p>
+        <p id="user-reg"></p>
+    </div>
+    <a href="/accounts/dashboard/" class="button">Go to Dashboard</a>
+
+    <script>
+        // Get user info from JWT stored in localStorage
+        const token = localStorage.getItem("access");
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1])); // decode JWT payload
+            document.getElementById('welcome-msg').innerText = `Welcome, ${payload.full_name || payload.username || 'User'}!`;
+            document.getElementById('user-email').innerText = `Email: ${payload.email || ''}`;
+            document.getElementById('user-reg').innerText = `Registration Number: ${payload.registration_number || ''}`;
+        }
+    </script>
+</body>
+</html>
