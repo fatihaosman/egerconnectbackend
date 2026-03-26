@@ -70,6 +70,15 @@ class SupportRequest(models.Model):
         ],
         default="no"
     )
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("declined", "Declined"),
+        ],
+        default="pending"
+    )
 
     # Section 4: Verification (Optional)
     proof_document = models.FileField(upload_to="support_proofs/", blank=True, null=True)

@@ -83,7 +83,7 @@ class SupportRequestViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         # Admin can list and retrieve
         if self.action in ["list", "retrieve"]:
-            return [permissions.IsAdminUser()]
+            return [permissions.IsAuthenticated()]
 
         # Only authenticated users can create
         return [permissions.IsAuthenticated()]
