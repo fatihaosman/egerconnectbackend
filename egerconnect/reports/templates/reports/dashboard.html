@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Support Requests Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    body { font-family: Arial; margin: 20px; background: #f8f8f8; }
+    h1 { text-align: center; margin-bottom: 30px; }
+
+ 
+    {% comment %} /* Card colors */
+    .card.total { background-color: #4caf50; }
+    .card.week { background-color: #ff9800; }
+    .card.month { background-color: #2196f3; }
+    .card.year { background-color: #9c27b0; }
+    .card.pending { background-color: #f44336; }
+    .card.accepted { background-color: #3f51b5; }
+    .card.declined { background-color: #607d8b; }
+    .card.rate { background-color: #00bcd4; } {% endcomment %}
+   /* CARDS GRID */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 👈 5 equal cards in one row */
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+/* CARD STYLE */
+.card {
+    background: #fff;
+    padding-left: 15px;
+    padding-top: 8px;
+    padding-bottom: 0px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* ICON */
+.card i {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+/* TITLE */
+.card h3 {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+/* VALUE */
+.card p span {
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+}
+
+/* LEFT BORDER COLORS */
+.card.total {
+    border-left: 5px solid #2196f3;
+}
+
+.card.rate {
+    border-left: 5px solid #00bcd4;
+}
+
+.card.pending {
+    border-left: 5px solid #ff9800;
+}
+
+.card.accepted {
+    border-left: 5px solid #4caf50;
+}
+
+.card.declined {
+    border-left: 5px solid #f44336;
+}
+   /* Charts container - GRID layout */
+.charts { 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.card.accepted i { color: #4caf50; }
+.card.pending i { color: #ff9800; }
+.card.declined i { color: #f44336; }
+
+
+
+/* 📱 Tablets / small screens */
+@media (max-width: 1024px) {
+    .cards {
+        grid-template-columns: repeat(4, 1fr); /* 👈 4 cards */
+    }
+}
+
+/* 📱 Phones */
+@media (max-width: 600px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr); /* 👈 2 cards */
+    }
+}
+
+
+/* Chart box */
+.chart-container { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    height: 350px; /* 👈 ADD THIS */
+}
+
+canvas { 
+    width: 100% !important;
+    height: 100% !important; /* 👈 ADD THIS */
+}
+/* ✅ Responsive fix */
+@media (max-width: 768px) {
+    .charts {
+        grid-template-columns: 1fr; /* 1 column on small screens */
+    }
+}
+</style>
+</head>
+<body>
+
+<h1>Support Requests Report</h1>
+
+<div class="cards">
+    <div class="card total">
+        <i class="fas fa-list"></i>
+        <h3>Total Requests</h3>
+        <p><span>{{ total_requests }}</span></p>
+    </div>
+
+    <div class="card rate">
+        <i class="fas fa-percentage"></i>
+        <h3>Acceptance Rate</h3>
+        <p><span>{{ acceptance_rate }}%</span></p>
+    </div>
+
+    <div class="card pending">
+        <i class="fas fa-clock"></i>
+        <h3>Pending</h3>
+        <p><span>{{ pending_count }}</span></p>
+    </div>
+
+    <div class="card accepted">
+        <i class="fas fa-check"></i>
+        <h3>Accepted</h3>
+        <p><span>{{ accepted_count }}</span></p>
+    </div>
+
+    <div class="card declined">
+        <i class="fas fa-times"></i>
+        <h3>Declined</h3>
+        <p><span>{{ declined_count }}</span></p>
+    </div>
+</div>
+
+<div class="charts">
+    <div class="chart-container">
+        <canvas id="weekChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="monthChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="yearChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="requestTypeChart"></canvas>
+    </div>
+</div>
+
+<script>
+// Weekly chart
+const weekCtx = document.getElementById('weekChart').getContext('2d');
+new Chart(weekCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ week_labels|safe }},
+        datasets: [{
+            label: 'Requests per Week',
+            data: {{ week_counts|safe }},
+            backgroundColor: 'rgba(255, 152, 0, 0.7)',
+            borderColor: 'rgba(255, 152, 0, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Requests Per Week (Current Month)',
+                font: { size: 16 }
+            }
+        },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Monthly chart
+const monthCtx = document.getElementById('monthChart').getContext('2d');
+new Chart(monthCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ month_labels|safe }},
+        datasets: [{
+            label: 'Requests per Month',
+            data: {{ monthly_counts|safe }},
+            backgroundColor: 'rgba(33, 150, 243, 0.7)',
+            borderColor: 'rgba(33, 150, 243, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Requests Per Month (Current Year)',
+                font: { size: 16 }
+            }
+        },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Yearly chart
+const yearCtx = document.getElementById('yearChart').getContext('2d');
+new Chart(yearCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ year_labels|safe }},
+        datasets: [{
+            label: 'Requests per Year',
+            data: {{ yearly_counts|safe }},
+            backgroundColor: 'rgba(156, 39, 176, 0.7)',
+            borderColor: 'rgba(156, 39, 176, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Requests Per Year',
+                font: { size: 16 }
+            }
+        },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Most common request types chart
+const typeCtx = document.getElementById('requestTypeChart').getContext('2d');
+const labels = [{% for type,count in most_common_types %}'{{ type }}',{% endfor %}];
+const data = [{% for type,count in most_common_types %}{{ count }},{% endfor %}];
+
+// Auto-generate colors for each type
+const bgColors = labels.map(() => `hsl(${Math.random()*360}, 70%, 50%)`);
+
+new Chart(typeCtx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Request Type Count',
+            data: data,
+            backgroundColor: bgColors,
+            borderColor: bgColors,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Most Common Request Types',
+                font: { size: 16 }
+            }
+        },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+
+</body>
+</html>

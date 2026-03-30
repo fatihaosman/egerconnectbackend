@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 
 class Notice(models.Model):
     title = models.CharField(max_length=255, blank=True)
@@ -91,3 +92,53 @@ class SupportRequest(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.type_of_need}"
+    
+    
+    
+class Club(models.Model):
+
+    CATEGORY_CHOICES = [
+        ("sports", "Sports"),
+        ("religious", "Religious"),
+        ("courses", "Course-Based"),
+        ("others", "Others"),
+    ]
+
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default="others" 
+    )
+    image = models.ImageField(upload_to="clubs/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+
+            while Club.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+class ClubImage(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="clubs/")
+
+    def __str__(self):
+        return f"Image for {self.club.name}"

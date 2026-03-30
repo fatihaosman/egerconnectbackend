@@ -1,0 +1,136 @@
+<style>
+  .cards-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 40px;
+    flex-wrap: wrap; /* allows wrapping on small screens */
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 20px;
+    flex: 1;
+    min-width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+/* Left borders with colors */
+.card.total { border-left: 6px solid #2196F3; }
+.card.growth { border-left: 6px solid #9C27B0; }
+.card.joined { border-left: 6px solid #FFC107; }
+
+/* Icon styling */
+.card .icon {
+    font-size: 30px;
+    margin-right: 15px;
+}
+
+.card.total .icon { color: #2196F3; }
+.card.growth .icon { color: #9C27B0; }
+.card.joined .icon { color: #FFC107; }
+
+.card .info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.card .info p {
+    margin: 5px 0 0 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: #222;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cards-container {
+        flex-direction: column;
+    }
+}
+</style>
+
+
+
+
+<div class="header">
+    <h1>Posts Report</h1>
+    <p>Overview of posts by category</p>
+</div>
+
+<div class="cards-container">
+    <!-- Total Posts -->
+    <div class="card total">
+        <div class="icon"><i class="fas fa-file-alt"></i></div>
+        <div class="info">
+            <h3>Total Posts</h3>
+            <p>{{ total_posts }}</p>
+        </div>
+    </div>
+
+    <!-- Most Used Category -->
+    <div class="card growth">
+        <div class="icon"><i class="fas fa-layer-group"></i></div>
+        <div class="info">
+            <h3>Most Used Category</h3>
+            <p>{{ most_used_category|default:"N/A" }}</p>
+        </div>
+    </div>
+
+    <!-- Posts This Month -->
+    <div class="card joined">
+        <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+        <div class="info">
+            <h3>Posts This Month</h3>
+            <p>{{ posts_this_month }}</p>
+        </div>
+    </div>
+</div>
+
+   
+
+<div class="charts">
+    <div class="chart-container">
+        <canvas id="postsCategoryChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('postsCategoryChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ category_labels|safe }},
+        datasets: [{
+            label: 'Posts by Category',
+            data: {{ category_counts|safe }},
+            backgroundColor: [
+                'rgba(33,150,243,0.7)',
+                'rgba(156,39,176,0.7)',
+                'rgba(255,193,7,0.7)',
+                'rgba(76,175,80,0.7)'
+            ]
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Posts by Category'
+            }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>

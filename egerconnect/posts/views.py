@@ -12,6 +12,8 @@ from .serializers import (
 from rest_framework.permissions import IsAdminUser, AllowAny
 from django.shortcuts import render
 
+from rest_framework import viewsets, filters
+
 
 
 class NoticeViewSet(viewsets.ModelViewSet):
@@ -43,6 +45,9 @@ class ScholarshipViewSet(viewsets.ModelViewSet):
 class EventsViewSet(viewsets.ModelViewSet):
     queryset = Events.objects.all().order_by("-created_at")
     serializer_class = EventsSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'description']  # this makes search work
+
     def get_permissions(self):
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             return [IsAdminUser()]
@@ -124,3 +129,24 @@ def scholarships_page(request):
 
 def support_request_page(request):
     return render(request, "posts/support_request.html")
+
+from rest_framework import viewsets, filters
+from rest_framework.permissions import AllowAny, IsAdminUser
+from .models import Club
+from .serializers import ClubSerializer
+
+from rest_framework import viewsets, filters
+from .models import Club
+from .serializers import ClubSerializer
+
+class ClubViewSet(viewsets.ModelViewSet):
+    queryset = Club.objects.all().order_by("-created_at")
+    serializer_class = ClubSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'category', 'description', ]
+    lookup_field = "slug"
+
+    def get_permissions(self):
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            return [IsAdminUser()]
+        return [AllowAny()]

@@ -35,6 +35,8 @@ urlpatterns = [
     # Posts app
     path("api/posts/", include("posts.urls")),
     
+    path('reports/', include('reports.urls')),
+    
 ]
 
 if settings.DEBUG:
