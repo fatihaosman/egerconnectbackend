@@ -6,6 +6,11 @@ from .serializers import RegisterSerializer, LoginSerializer   #view doesnt vali
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
 
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 class RegisterView(APIView):
     def post(self, request):  #this method runs when a post request is sent to this endpoint(which is registering/signup).....api/auth/register/..... request conatins data and user that is making the request
         serializer = RegisterSerializer(data=request.data)   #take incoming data and pass tto this serializer for validation and saving to db
@@ -72,3 +77,16 @@ from rest_framework.decorators import api_view, permission_classes
 
 def dashboard_page(request):
     return render(request, "accounts/dashboard.html")
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+
+    return Response({
+        "id": user.id,
+        "name": user.full_name,
+        "email": user.email,
+        "regNo": user.registration_number,
+    })

@@ -37,6 +37,8 @@ urlpatterns = [
     
     path('reports/', include('reports.urls')),
     
+    path("api/support/", include("support_app.urls")),
+    
 ]
 
 if settings.DEBUG:
