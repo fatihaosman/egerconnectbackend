@@ -9,7 +9,9 @@ from .serializers import MyTokenObtainPairSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+
+
+from django.contrib.auth.hashers import check_password
 
 class RegisterView(APIView):
     def post(self, request):  #this method runs when a post request is sent to this endpoint(which is registering/signup).....api/auth/register/..... request conatins data and user that is making the request
@@ -78,7 +80,7 @@ from rest_framework.decorators import api_view, permission_classes
 def dashboard_page(request):
     return render(request, "accounts/dashboard.html")
 
-
+# for sending a message
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_profile(request):
@@ -90,3 +92,21 @@ def user_profile(request):
         "email": user.email,
         "regNo": user.registration_number,
     })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+
+    old_password = request.data.get("old_password")
+    new_password = request.data.get("new_password")
+
+    # ✅ check old password
+    if not user.check_password(old_password):
+        return Response({"error": "Old password is incorrect"}, status=400)
+
+    # ✅ set new password
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Password updated successfully"})
