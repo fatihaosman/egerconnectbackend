@@ -34,11 +34,28 @@ class UserManager(BaseUserManager):
 
 #OUR USER MODEL FILEDS
 class User(AbstractBaseUser, PermissionsMixin):
+    
+    FACULTY_CHOICES = [
+        ("SCIENCE", "Faculty of Science"),
+        ("ENGINEERING", "Faculty of Engineering"),
+        ("BUSINESS", "Faculty of Business & Economics"),
+        ("EDUCATION", "Faculty of Education & Community Studies"),
+        ("ARTS", "Faculty of Arts & Social Sciences"),
+        ("AGRICULTURE", "Faculty of Agriculture"),
+        ("VET", "Faculty of Veterinary Medicine & Surgery"),
+        ("ENVIRONMENT", "Faculty of Environment & Resources Development"),
+    ]
+    
+    
     full_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)    #NO TWO users can register same email.
-    registration_number = models.CharField(max_length=50)
-    faculty_department = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=20)
+    registration_number = models.CharField(max_length=50, unique=True)
+    #user can choose teh correct faculty from dropdown menu when registering, this ensures data consistency and prevents typos or variations in faculty names.
+    faculty_department = models.CharField(
+        max_length=50,
+        choices=FACULTY_CHOICES
+    )
+    phone_number = models.CharField(max_length=20, unique=True)
 
     is_active = models.BooleanField(default=True)  #if true-user can login, if false-user is not allowed to login
     is_staff = models.BooleanField(default=False)

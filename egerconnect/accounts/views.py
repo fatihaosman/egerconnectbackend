@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView  #apiview allows me to handle http methods,get,put, return json respones and use serializers easily
-from rest_framework.response import Response  #converts python dictionary into http responses, handles content type, works with status code
+from rest_framework.response import Response  #converts python dictionary into http responses, handles content type, works with status codes
 from rest_framework import status #more readble
 from .serializers import RegisterSerializer, LoginSerializer   #view doesnt validate data it sends to serializers
 from rest_framework_simplejwt.views import TokenObtainPairView

@@ -8,7 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)  #writeonly-password will never be  included in response for security reasons
 
-    class Meta:   #sowe are working with user model and these are the fields we want to include in our serializer
+    class Meta:   #so we are working with user model and these are the fields we want to include in our serializer
         model = User
         fields = [
             "full_name",
@@ -18,14 +18,61 @@ class RegisterSerializer(serializers.ModelSerializer):
             "phone_number",
             "password",
         ]
+    #  Email validation to ensure it follows the format
     def validate_email(self, value):
         pattern = r"^[A-Z]+\.\d+@student\.egerton\.ac\.ke$"
         if not re.match(pattern, value):
             raise serializers.ValidationError(
                 "Email must follow the format: LASTNAME.######@student.egerton.ac.ke"
             )
+        if User.objects.filter(email=value).exists():
+          raise serializers.ValidationError("Email already registered.")
         return value
+    
+    # Validates that the password is at least 8 characters long and contains uppercase, lowercase, and a number
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
 
+        if not re.search(r"[A-Z]", value):
+            raise serializers.ValidationError("Password must contain at least one uppercase letter.")
+
+        if not re.search(r"[a-z]", value):
+            raise serializers.ValidationError("Password must contain at least one lowercase letter.")
+
+        if not re.search(r"[0-9]", value):
+            raise serializers.ValidationError("Password must contain at least one number.")
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
+           raise serializers.ValidationError(
+           "Password must contain at least one special character."
+    )
+
+        return value
+    # Validates that the phone number starts with 07 and is 10 digits long
+    def validate_phone_number(self, value):
+        if not re.match(r"^07\d{8}$", value):
+            raise serializers.ValidationError(
+                "Phone number must start with 07 and be 10 digits."
+            )
+        if User.objects.filter(phone_number=value).exists():
+         raise serializers.ValidationError("Phone number already exists.")
+        return value
+    
+    
+    def validate_registration_number(self, value):
+        if User.objects.filter(registration_number=value).exists():
+            raise serializers.ValidationError("Registration number already exists.")
+
+        return value
+        
+    #  #  General validation (duplicate email)
+    # def validate(self, data):
+    #     if User.objects.filter(email=data.get("email")).exists():
+    #         raise serializers.ValidationError({
+    #             "email": "This email is already registered."
+    #         })
+    #     return data
+    # remove password from validated data and create user using create_user method in user manager which handles password hashing and saving to db
     def create(self, validated_data):
         password = validated_data.pop("password")
         user = User.objects.create_user(
